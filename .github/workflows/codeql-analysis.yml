@@ -2,10 +2,10 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [pmaytak/build]
+    branches: [master]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [pmaytak/build]
+    branches: [master]
 
 jobs:
   analyse:
@@ -32,21 +32,13 @@ jobs:
       # with:
       #   languages: go, javascript, csharp, python, cpp, java
 
-    # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
-    # If this step fails, then you should remove it and run the build manually (see below)
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v1
-
-    # ℹ️ Command-line programs to run using the OS shell.
-    # 📚 https://git.io/JvXDl
-
-    # ✏️ If the Autobuild fails above, remove it and uncomment the following three lines
-    #    and modify them (or add more) to build your code if your project
-    #    uses a compiled language
-
-    #- run: |
-    #   make bootstrap
-    #   make release
+    - name: Setup .NET Core 5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.100-preview.5.20279.10
+        includePreviewVersions: true # Required for preview versions
+    - name: Build with dotnet
+      run: dotnet test -f net5.0 -p:FROM_GITHUB_ACTION=true --configuration Release Microsoft.Identity.Web.sln
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
